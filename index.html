@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Pickup Board v3</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ==========================
+             Header
+        =========================== -->
+
+        <header class="header">
+
+            <h1>Pickup Board v3</h1>
+
+            <p>푸드트럭 주문 관리 시스템</p>
+
+        </header>
+
+
+
+        <!-- ==========================
+             Dashboard
+        =========================== -->
+
+        <main class="dashboard">
+
+            <!-- ======================
+                 주문 등록
+            ======================= -->
+
+            <section class="card order-card">
+
+                <h2>주문 등록</h2>
+
+                <div class="order-number">
+
+                    <label for="orderNumber">
+                        주문번호
+                    </label>
+
+                    <input
+                        id="orderNumber"
+                        type="number">
+
+                </div>
+
+
+                <div class="menu-list">
+
+                    <!-- 칠리새우 -->
+
+                    <div class="menu-item">
+
+                        <label class="menu-name">
+
+                            🌶️칠리새우
+
+                        </label>
+
+                        <div class="counter">
+
+                            <button
+                                id="minusChili"
+                                class="minus">
+
+                                -
+
+                            </button>
+
+                            <span
+                                id="countChili"
+                                class="count-text">
+
+                                0
+
+                            </span>
+
+                            <button
+                                id="plusChili"
+                                class="plus">
+
+                                +
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 크림새우 -->
+
+                    <div class="menu-item">
+
+                        <label class="menu-name">
+
+                            🍤크림새우
+
+                        </label>
+
+                        <div class="counter">
+
+                            <button
+                                id="minusCream"
+                                class="minus">
+
+                                -
+
+                            </button>
+
+                            <span
+                                id="countCream"
+                                class="count-text">
+
+                                0
+
+                            </span>
+
+                            <button
+                                id="plusCream"
+                                class="plus">
+
+                                +
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 회오리감자 -->
+
+                    <div class="menu-item">
+
+                        <label class="menu-name">
+
+                            🍟회오리감자
+
+                        </label>
+
+                        <div class="counter">
+
+                            <button
+                                id="minusPotato"
+                                class="minus">
+
+                                -
+
+                            </button>
+
+                            <span
+                                id="countPotato"
+                                class="count-text">
+
+                                0
+
+                            </span>
+
+                            <button
+                                id="plusPotato"
+                                class="plus">
+
+                                +
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="registerButton"
+                    class="register-button">
+
+                    주문 등록
+
+                </button>
+
+            </section>
+
+
+
+            <!-- ======================
+                 현재 주문
+            ======================= -->
+
+            <section class="card current-card">
+
+                <h2>
+
+                    현재 주문
+
+                    <small>(최대 6개)</small>
+
+                </h2>
+
+                <div
+                    id="currentOrders"
+                    class="current-orders">
+
+                </div>
+
+                <div class="summary">
+
+                    <div class="waiting-count">
+
+                        <strong id="waitingCount">
+                            대기 주문 0건
+                        </strong>
+
+                        <span id="hiddenOrderCount">
+
+                        </span>
+
+                    </div>
+
+                    <div class="menu-summary">
+
+                        <span id="summaryChili">
+
+                            🌶️ 칠리새우 0개
+
+                        </span>
+
+                        <span id="summaryCream">
+
+                            🍤 크림새우 0개
+
+                        </span>
+
+                        <span id="summaryPotato">
+
+                            🍟 회오리감자 0개
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ======================
+                 번호 호출
+            ======================= -->
+
+            <section class="card call-card">
+
+                <h2>번호 호출</h2>
+
+                <div
+                    id="calledOrders"
+                    class="called-orders">
+
+                </div>
+
+                <button
+                    id="recallButton"
+                    class="recall-button">
+
+                    전체 재호출
+
+                </button>
+
+            </section>
+
+
+
+            <!-- ======================
+                 현재 현황
+            ======================= -->
+
+            <section class="card status-card">
+
+                <h2>현재 현황</h2>
+
+                <div class="status-grid">
+
+                    <!-- 예상 대기시간 -->
+
+                    <div class="status-column">
+
+                        <h3>예상대기시간</h3>
+
+                        <div
+                            id="estimatedTime"
+                            class="status-value">
+
+                            0분
+
+                        </div>
+
+                        <div
+                            id="waitingOrders"
+                            class="status-sub">
+
+                            대기 0건
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 누적 판매 -->
+
+                    <div class="status-column">
+
+                        <h3>누적판매량</h3>
+
+                        <div
+                            id="salesChili">
+
+                            🌶️칠리새우 0
+
+                        </div>
+
+                        <div
+                            id="salesCream">
+
+                            🍤크림새우 0
+
+                        </div>
+
+                        <div
+                            id="salesPotato">
+
+                            🍟회오리감자 0
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 재고 -->
+
+                    <div class="status-column">
+
+                        <h3>재고량</h3>
+
+                        <div
+                            id="stockChili">
+
+                            🌶️칠리새우 0
+
+                        </div>
+
+                        <div
+                            id="stockCream">
+
+                            🍤크림새우 0
+
+                        </div>
+
+                        <div
+                            id="stockPotato">
+
+                            🍟회오리감자 0
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="status-buttons">
+
+                    <button
+                        id="resetButton"
+                        class="reset-button">
+
+                        주문 초기화
+
+                    </button>
+
+                    <button
+                        id="closeButton"
+                        class="close-button">
+
+                        영업 종료
+
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
