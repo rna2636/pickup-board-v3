@@ -1,0 +1,350 @@
+/* =========================================================
+   고객용 주문번호 호출 화면
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    background: #f3f5f7;
+    color: #050505;
+
+    font-family:
+        Pretendard,
+        "Noto Sans KR",
+        "Apple SD Gothic Neo",
+        Arial,
+        sans-serif;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   전체 화면
+========================================================= */
+
+.customer-screen {
+    width: 100vw;
+    min-height: 100vh;
+
+    display: grid;
+    grid-template-rows:
+        auto
+        1fr
+        auto
+        auto;
+
+    gap: 22px;
+
+    padding: 34px 42px 28px;
+}
+
+
+/* =========================================================
+   상단
+========================================================= */
+
+.customer-header {
+    text-align: center;
+}
+
+.brand-name {
+    color: #050505;
+
+    font-size: clamp(28px, 2.5vw, 44px);
+    font-weight: 950;
+}
+
+.brand-subtitle {
+    margin-top: 6px;
+
+    color: #303844;
+
+    font-size: clamp(18px, 1.5vw, 26px);
+    font-weight: 850;
+}
+
+
+/* =========================================================
+   준비 완료 영역
+========================================================= */
+
+.ready-section {
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 26px;
+
+    border: 3px solid #111827;
+    border-radius: 24px;
+
+    background: #ffffff;
+
+    box-shadow: none;
+
+    backdrop-filter: none;
+}
+
+.section-title-row {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-bottom: 24px;
+}
+
+.status-dot {
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+
+    background: #00a63e;
+    border: 5px solid #006b29;
+
+    box-shadow: none;
+}
+
+.section-title-row h1 {
+    color: #070707;
+
+    font-size: clamp(43px, 4.32vw, 74px);
+    font-weight: 950;
+}
+
+
+/* =========================================================
+   주문번호 카드
+========================================================= */
+
+.ready-number-grid {
+    flex: 1;
+    min-height: 0;
+
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    grid-template-rows:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.ready-number-card {
+    position: relative;
+
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border: 3px solid #172033;
+    border-radius: 20px;
+
+    background: #ffffff;
+    color: #050505;
+
+    box-shadow: none;
+}
+
+.ready-number-card strong {
+    color: #000000;
+
+    font-size: clamp(90px, 10.12vw, 174px); /* ~+10% 전체 크기 */
+    font-weight: 950;
+    line-height: 0.95;
+}
+
+.number-label {
+    margin-bottom: 0;
+    height: 0;
+    line-height: 0;
+    padding: 0;
+    color: transparent; /* ensure no visible text if any remains */
+    font-size: 0;
+}
+
+/* consolidated latest-label: keep white badge appearance, slightly larger */
+.latest-label {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+
+    padding: 8px 14px;
+
+    border: 2px solid #111111;
+    border-radius: 999px;
+
+    background: #ffffff;
+    color: #000000;
+
+    font-size: clamp(15px, 1.1vw, 20px);
+    font-weight: 950;
+}
+
+.ready-number-card.is-latest {
+    border: 6px solid #000000;
+
+    background: #ffe600;
+    color: #000000;
+
+    box-shadow: none;
+}
+
+.ready-number-card.is-latest strong {
+    color: #000000;
+    font-weight: 950;
+}
+
+
+/* =========================================================
+   안내 문구
+========================================================= */
+
+.pickup-message {
+    padding: 18px 24px;
+
+    text-align: center;
+}
+
+.pickup-main {
+    color: #050505;
+
+    font-size: clamp(25px, 2.2vw, 39px);
+    font-weight: 950;
+}
+
+.pickup-sub {
+    margin-top: 6px;
+
+    color: #303844;
+
+    font-size: clamp(17px, 1.4vw, 24px);
+    font-weight: 850;
+}
+
+
+/* =========================================================
+   하단 현황
+========================================================= */
+
+.customer-footer {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.waiting-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 18px;
+
+    padding: 15px 20px;
+
+    border: 3px solid #172033;
+    border-radius: 16px;
+
+    background: #ffffff;
+}
+
+.waiting-info span {
+    color: #303844;
+
+    font-size: clamp(16px, 1.3vw, 22px);
+    font-weight: 850;
+}
+
+.waiting-info strong {
+    color: #005bd8;
+
+    font-size: clamp(22px, 2vw, 34px);
+    font-weight: 950;
+}
+
+
+/* =========================================================
+   태블릿 세로
+========================================================= */
+
+@media (max-width: 900px) {
+    body {
+        overflow: auto;
+    }
+
+    .customer-screen {
+        min-height: 100vh;
+
+        grid-template-rows:
+            auto
+            auto
+            auto
+            auto;
+
+        padding: 24px 20px;
+    }
+
+    .ready-number-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        grid-template-rows:
+            repeat(3, 210px);
+    }
+
+    .ready-number-card strong {
+        font-size: 109px;
+    }
+}
+
+
+/* =========================================================
+   모바일
+========================================================= */
+
+@media (max-width: 560px) {
+    .customer-screen {
+        padding: 18px 12px;
+    }
+
+    .ready-section {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .ready-number-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows:
+            repeat(6, 160px);
+    }
+
+    .ready-number-card strong {
+        font-size: 92px;
+        letter-spacing: -3px;
+    }
+
+    .customer-footer {
+        grid-template-columns: 1fr;
+    }
+}

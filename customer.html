@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Pickup Board - 고객 호출 화면</title>
+
+    <link
+        rel="stylesheet"
+        href="customer.css"
+    >
+</head>
+
+<body>
+
+    <main class="customer-screen">
+
+        <header class="customer-header">
+            <p class="brand-name">
+                Pickup Board
+            </p>
+
+            <p class="brand-subtitle">
+                주문번호를 확인해 주세요
+            </p>
+        </header>
+
+
+        <section class="ready-section">
+
+            <div class="section-title-row">
+                <span class="status-dot"></span>
+
+                <h1>준비 완료</h1>
+            </div>
+
+            <div class="ready-number-grid">
+
+                <div class="ready-number-card is-latest">
+                    <div class="number-label"></div>
+                    <strong>18</strong>
+                    <span class="latest-label">방금 호출</span>
+                </div>
+
+                <div class="ready-number-card">
+                    <div class="number-label"></div>
+                    <strong>15</strong>
+                </div>
+
+                <div class="ready-number-card">
+                    <div class="number-label"></div>
+                    <strong>12</strong>
+                </div>
+
+                <div class="ready-number-card">
+                    <div class="number-label"></div>
+                    <strong>9</strong>
+                </div>
+
+                <div class="ready-number-card">
+                    <div class="number-label"></div>
+                    <strong>7</strong>
+                </div>
+
+                <div class="ready-number-card">
+                    <div class="number-label"></div>
+                    <strong>4</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="pickup-message">
+
+            <p class="pickup-main">
+                주문하신 음식이 준비되었습니다
+            </p>
+
+            <p class="pickup-sub">
+                주문번호를 확인한 뒤 픽업대로 와주세요
+            </p>
+
+        </section>
+
+
+        <footer class="customer-footer">
+
+            <div class="waiting-info">
+                <span>현재 대기 주문</span>
+                <strong>8건</strong>
+            </div>
+
+            <div class="waiting-info">
+                <span>예상 대기시간</span>
+                <strong>약 20분</strong>
+            </div>
+
+        </footer>
+
+    </main>
+<script src="customer.js"></script>
+</body>
+</html>
