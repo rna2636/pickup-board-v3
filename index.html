@@ -55,9 +55,64 @@
                         주문번호
                     </label>
 
-                    <input
+                    <button
                         id="orderNumber"
-                        type="number">
+                        type="button"
+                        class="order-number-display"
+                        aria-haspopup="dialog"
+                        aria-expanded="false">
+                        1
+                    </button>
+
+                </div>
+
+                <div
+                    id="orderNumberModal"
+                    class="order-number-modal"
+                    hidden
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="orderNumberModalTitle">
+
+                    <div class="order-number-modal-panel">
+
+                        <div class="order-number-modal-header">
+                            <h3 id="orderNumberModalTitle">
+                                주문번호 수정
+                            </h3>
+                        </div>
+
+                        <div
+                            id="orderNumberValue"
+                            class="order-number-value">
+                            1
+                        </div>
+
+                        <div class="order-number-keypad">
+
+                            <button type="button" class="keypad-button" data-digit="1">1</button>
+                            <button type="button" class="keypad-button" data-digit="2">2</button>
+                            <button type="button" class="keypad-button" data-digit="3">3</button>
+                            <button type="button" class="keypad-button" data-digit="4">4</button>
+                            <button type="button" class="keypad-button" data-digit="5">5</button>
+                            <button type="button" class="keypad-button" data-digit="6">6</button>
+                            <button type="button" class="keypad-button" data-digit="7">7</button>
+                            <button type="button" class="keypad-button" data-digit="8">8</button>
+                            <button type="button" class="keypad-button" data-digit="9">9</button>
+                            <button type="button" class="keypad-button keypad-cancel" data-action="cancel">취소</button>
+                            <button type="button" class="keypad-button" data-digit="0">0</button>
+                            <button type="button" class="keypad-button keypad-backspace" data-action="backspace">←</button>
+
+                        </div>
+
+                        <button
+                            id="orderNumberConfirm"
+                            type="button"
+                            class="order-number-confirm">
+                            확인
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -412,7 +467,7 @@
 
     </div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=20260818-1"></script>
 
 </body>
 

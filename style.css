@@ -181,7 +181,7 @@ input:focus-visible {
     font-weight: 900;
 }
 
-.order-number input {
+.order-number-display {
     width: 100%;
     height: 58px;
 
@@ -196,6 +196,7 @@ input:focus-visible {
 
     font-size: 29px;
     font-weight: 900;
+    text-align: left;
 
     transition:
         border-color 0.15s ease,
@@ -203,7 +204,12 @@ input:focus-visible {
         background 0.15s ease;
 }
 
-.order-number input:focus {
+.order-number-display:hover {
+    border-color: #8ab0f7;
+    background: #f3f8ff;
+}
+
+.order-number-display:focus-visible {
     border-color: #2f7ef7;
     background: #ffffff;
 
@@ -211,6 +217,131 @@ input:focus-visible {
         0 0 0 4px rgba(47, 126, 247, 0.12);
 
     outline: none;
+}
+
+.order-number-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2500;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 18px;
+
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.order-number-modal[hidden] {
+    display: none;
+}
+
+.order-number-modal-panel {
+    width: min(90vw, 360px);
+
+    padding: 18px 16px 16px;
+
+    border: 1px solid #dfe7f2;
+    border-radius: 18px;
+
+    background: #ffffff;
+    box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.18);
+}
+
+.order-number-modal-header {
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.order-number-modal-header h3 {
+    color: #111827;
+    font-size: 19px;
+    font-weight: 900;
+}
+
+.order-number-value {
+    min-height: 62px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 16px;
+
+    border: 1px solid #d7e3f5;
+    border-radius: 12px;
+
+    background: #f7fbff;
+    color: #111827;
+
+    font-size: clamp(30px, 7vw, 40px);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+}
+
+.order-number-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.keypad-button {
+    min-height: 62px;
+
+    border-radius: 12px;
+
+    background: #edf4ff;
+    color: #1d4ed8;
+
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+
+    transition:
+        background 0.15s ease,
+        transform 0.1s ease;
+}
+
+.keypad-button:hover {
+    background: #dfeeff;
+}
+
+.keypad-button:active {
+    transform: scale(0.98);
+}
+
+.keypad-cancel,
+.keypad-backspace {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+.keypad-cancel:hover,
+.keypad-backspace:hover {
+    background: #d6dae1;
+}
+
+.order-number-confirm {
+    width: 100%;
+    min-height: 52px;
+
+    margin-top: 16px;
+
+    border-radius: 12px;
+
+    background: #347ff0;
+    color: #ffffff;
+
+    font-size: 20px;
+    font-weight: 900;
+
+    box-shadow: 0 8px 18px rgba(52, 127, 240, 0.2);
+}
+
+.order-number-confirm:hover {
+    background: #246fe2;
 }
 
 

@@ -87,6 +87,19 @@ let internalOrderId = 1;
 const orderNumberInput =
     document.getElementById("orderNumber");
 
+const orderNumberModal =
+    document.getElementById("orderNumberModal");
+
+const orderNumberValueText =
+    document.getElementById("orderNumberValue");
+
+const orderNumberConfirmButton =
+    document.getElementById("orderNumberConfirm");
+
+let nextOrderNumber = 1;
+
+let orderNumberDraftValue = "1";
+
 const registerButton =
     document.getElementById("registerButton");
 
@@ -287,7 +300,7 @@ function saveState() {
         internalOrderId,
 
         nextOrderNumber:
-            Number(orderNumberInput.value) || 1
+            getSafeNextOrderNumber(nextOrderNumber)
     };
 
     try {
@@ -347,12 +360,12 @@ function loadState() {
                 ? parsedState.internalOrderId
                 : 1;
 
-        orderNumberInput.value =
-            Number.isInteger(
+        nextOrderNumber =
+            getSafeNextOrderNumber(
                 parsedState.nextOrderNumber
-            )
-                ? parsedState.nextOrderNumber
-                : 1;
+            );
+
+        updateOrderNumberDisplay();
 
         repairLoadedOrders();
 
@@ -459,6 +472,145 @@ function renderCurrentOrderCounts() {
 
     potatoCountText.textContent =
         currentOrder.tornadoPotato;
+}
+
+
+function getSafeNextOrderNumber(value) {
+    const parsedValue = Number(value);
+
+    if (
+        !Number.isInteger(parsedValue) ||
+        parsedValue < 1 ||
+        parsedValue > 9999
+    ) {
+        return 1;
+    }
+
+    return parsedValue;
+}
+
+
+function updateOrderNumberDisplay() {
+    if (orderNumberInput) {
+        orderNumberInput.textContent =
+            String(nextOrderNumber);
+    }
+
+    if (orderNumberValueText) {
+        orderNumberValueText.textContent =
+            String(orderNumberDraftValue || nextOrderNumber);
+    }
+}
+
+
+function updateOrderNumberModalDisplay() {
+    if (orderNumberValueText) {
+        orderNumberValueText.textContent =
+            orderNumberDraftValue || "0";
+    }
+}
+
+
+function openOrderNumberPad() {
+    if (!orderNumberModal) {
+        return;
+    }
+
+    orderNumberDraftValue =
+        String(nextOrderNumber);
+
+    updateOrderNumberModalDisplay();
+
+    orderNumberModal.hidden = false;
+    orderNumberModal.classList.add("is-open");
+    orderNumberInput.setAttribute(
+        "aria-expanded",
+        "true"
+    );
+}
+
+
+function closeOrderNumberPad() {
+    if (!orderNumberModal) {
+        return;
+    }
+
+    orderNumberModal.hidden = true;
+    orderNumberModal.classList.remove("is-open");
+
+    if (orderNumberInput) {
+        orderNumberInput.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+    }
+}
+
+
+function appendOrderNumberDigit(digit) {
+    const nextDigit = String(digit);
+
+    if (orderNumberDraftValue.length >= 4) {
+        return;
+    }
+
+    if (orderNumberDraftValue === "0") {
+        orderNumberDraftValue = nextDigit;
+    } else {
+        orderNumberDraftValue += nextDigit;
+    }
+
+    updateOrderNumberModalDisplay();
+}
+
+
+function removeLastOrderNumberDigit() {
+    if (orderNumberDraftValue.length <= 1) {
+        orderNumberDraftValue = "0";
+    } else {
+        orderNumberDraftValue =
+            orderNumberDraftValue.slice(0, -1);
+    }
+
+    updateOrderNumberModalDisplay();
+}
+
+
+function applyOrderNumberDraft() {
+    const trimmedDraft =
+        orderNumberDraftValue.trim();
+
+    if (
+        trimmedDraft === "" ||
+        trimmedDraft === "0" ||
+        !/^[1-9]\d{0,3}$/.test(trimmedDraft)
+    ) {
+        alert(
+            "주문번호는 1~9999 사이의 정수만 사용할 수 있습니다."
+        );
+
+        return;
+    }
+
+    const parsedValue =
+        Number.parseInt(trimmedDraft, 10);
+
+    if (
+        !Number.isInteger(parsedValue) ||
+        parsedValue < 1 ||
+        parsedValue > 9999
+    ) {
+        alert(
+            "주문번호는 1~9999 사이의 정수만 사용할 수 있습니다."
+        );
+
+        return;
+    }
+
+    nextOrderNumber = parsedValue;
+    updateOrderNumberDisplay();
+    saveState();
+    closeOrderNumberPad();
 }
 
 
@@ -1450,8 +1602,8 @@ function validateStock() {
 
 function registerOrder() {
     const enteredOrderNumber =
-        Number(
-            orderNumberInput.value
+        getSafeNextOrderNumber(
+            nextOrderNumber
         );
 
     if (
@@ -1463,8 +1615,6 @@ function registerOrder() {
         alert(
             "올바른 주문번호를 입력해 주세요."
         );
-
-        orderNumberInput.focus();
 
         return;
     }
@@ -1490,9 +1640,6 @@ function registerOrder() {
         alert(
             "이미 사용 중인 주문번호입니다."
         );
-
-        orderNumberInput.focus();
-        orderNumberInput.select();
 
         return;
     }
@@ -1554,14 +1701,13 @@ function registerOrder() {
 
     resetCurrentOrder();
 
-    orderNumberInput.value =
+    nextOrderNumber =
         enteredOrderNumber + 1;
+
+    updateOrderNumberDisplay();
 
     saveState();
     renderAll();
-
-    orderNumberInput.focus();
-    orderNumberInput.select();
 }
 
 
@@ -1572,22 +1718,63 @@ registerButton.addEventListener(
 
 
 orderNumberInput.addEventListener(
-    "keydown",
-    function (event) {
-        if (event.key !== "Enter") {
-            return;
-        }
-
-        event.preventDefault();
-
-        registerOrder();
-    }
+    "click",
+    openOrderNumberPad
 );
 
 
-orderNumberInput.addEventListener(
-    "change",
-    saveState
+document.querySelectorAll(
+    "[data-digit]"
+).forEach(function (button) {
+    button.addEventListener(
+        "click",
+        function () {
+            const digit = button.dataset.digit;
+
+            if (digit === undefined || digit === null) {
+                return;
+            }
+
+            appendOrderNumberDigit(digit);
+        }
+    );
+});
+
+
+document.querySelectorAll(
+    "[data-action]"
+).forEach(function (button) {
+    button.addEventListener(
+        "click",
+        function () {
+            const action = button.dataset.action;
+
+            if (action === "cancel") {
+                closeOrderNumberPad();
+                return;
+            }
+
+            if (action === "backspace") {
+                removeLastOrderNumberDigit();
+            }
+        }
+    );
+});
+
+
+orderNumberConfirmButton.addEventListener(
+    "click",
+    applyOrderNumberDraft
+);
+
+
+orderNumberModal.addEventListener(
+    "click",
+    function (event) {
+        if (event.target === orderNumberModal) {
+            closeOrderNumberPad();
+        }
+    }
 );
 
 
@@ -1612,9 +1799,10 @@ resetButton.addEventListener(
 
         internalOrderId = 1;
 
-        resetCurrentOrder();
+        nextOrderNumber = 1;
+        updateOrderNumberDisplay();
 
-        orderNumberInput.value = 1;
+        resetCurrentOrder();
 
         if (
             "speechSynthesis" in window
@@ -1624,9 +1812,6 @@ resetButton.addEventListener(
 
         saveState();
         renderAll();
-
-        orderNumberInput.focus();
-        orderNumberInput.select();
     }
 );
 
@@ -1698,9 +1883,10 @@ closeButton.addEventListener(
 
         internalOrderId = 1;
 
-        resetCurrentOrder();
+        nextOrderNumber = 1;
+        updateOrderNumberDisplay();
 
-        orderNumberInput.value = 1;
+        resetCurrentOrder();
 
         if (
             "speechSynthesis" in window
@@ -1713,9 +1899,6 @@ closeButton.addEventListener(
         );
 
         renderAll();
-
-        orderNumberInput.focus();
-        orderNumberInput.select();
 
         alert(
             "영업이 종료되었습니다."
@@ -1744,14 +1927,13 @@ function initializeApp() {
         loadState();
 
     if (!stateLoaded) {
-        orderNumberInput.value = 1;
+        nextOrderNumber = 1;
     }
+
+    updateOrderNumberDisplay();
 
     resetCurrentOrder();
     renderAll();
-
-    orderNumberInput.focus();
-    orderNumberInput.select();
 }
 
 
