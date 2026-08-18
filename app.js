@@ -87,18 +87,21 @@ let internalOrderId = 1;
 const orderNumberInput =
     document.getElementById("orderNumber");
 
-const orderNumberModal =
-    document.getElementById("orderNumberModal");
+const numericKeypadModal =
+    document.getElementById("numericKeypadModal");
 
-const orderNumberValueText =
-    document.getElementById("orderNumberValue");
+const numericKeypadTitle =
+    document.getElementById("numericKeypadTitle");
 
-const orderNumberConfirmButton =
-    document.getElementById("orderNumberConfirm");
+const numericKeypadValueText =
+    document.getElementById("numericKeypadValue");
+
+const numericKeypadConfirmButton =
+    document.getElementById("numericKeypadConfirm");
 
 let nextOrderNumber = 1;
 
-let orderNumberDraftValue = "1";
+let activeKeypadState = null;
 
 const registerButton =
     document.getElementById("registerButton");
@@ -495,34 +498,57 @@ function updateOrderNumberDisplay() {
         orderNumberInput.textContent =
             String(nextOrderNumber);
     }
-
-    if (orderNumberValueText) {
-        orderNumberValueText.textContent =
-            String(orderNumberDraftValue || nextOrderNumber);
-    }
 }
 
 
-function updateOrderNumberModalDisplay() {
-    if (orderNumberValueText) {
-        orderNumberValueText.textContent =
-            orderNumberDraftValue || "0";
-    }
-}
-
-
-function openOrderNumberPad() {
-    if (!orderNumberModal) {
+function updateNumericKeypadDisplay() {
+    if (!numericKeypadValueText || !activeKeypadState) {
         return;
     }
 
-    orderNumberDraftValue =
-        String(nextOrderNumber);
+    numericKeypadValueText.textContent =
+        activeKeypadState.draft || "0";
+}
 
-    updateOrderNumberModalDisplay();
 
-    orderNumberModal.hidden = false;
-    orderNumberModal.classList.add("is-open");
+function openNumericKeypad(mode, menuKey = null) {
+    if (!numericKeypadModal) {
+        return;
+    }
+
+    if (mode === "orderNumber") {
+        activeKeypadState = {
+            mode: "orderNumber",
+            menuKey: null,
+            draft: String(nextOrderNumber),
+            replaceOnNextDigit: true
+        };
+
+        if (numericKeypadTitle) {
+            numericKeypadTitle.textContent =
+                "주문번호 수정";
+        }
+    } else if (mode === "stock") {
+        activeKeypadState = {
+            mode: "stock",
+            menuKey,
+            draft: String(stock[menuKey]),
+            replaceOnNextDigit: true
+        };
+
+        if (numericKeypadTitle) {
+            const menuName = MENU_INFO[menuKey]?.name || "재고";
+            numericKeypadTitle.textContent =
+                `${menuName} 재고 수정`;
+        }
+    } else {
+        return;
+    }
+
+    updateNumericKeypadDisplay();
+
+    numericKeypadModal.hidden = false;
+    numericKeypadModal.classList.add("is-open");
     orderNumberInput.setAttribute(
         "aria-expanded",
         "true"
@@ -530,13 +556,14 @@ function openOrderNumberPad() {
 }
 
 
-function closeOrderNumberPad() {
-    if (!orderNumberModal) {
+function closeNumericKeypad() {
+    if (!numericKeypadModal) {
         return;
     }
 
-    orderNumberModal.hidden = true;
-    orderNumberModal.classList.remove("is-open");
+    numericKeypadModal.hidden = true;
+    numericKeypadModal.classList.remove("is-open");
+    activeKeypadState = null;
 
     if (orderNumberInput) {
         orderNumberInput.setAttribute(
@@ -547,70 +574,120 @@ function closeOrderNumberPad() {
 }
 
 
-function appendOrderNumberDigit(digit) {
+function handleDigitInput(digit) {
+    if (!activeKeypadState) {
+        return;
+    }
+
     const nextDigit = String(digit);
 
-    if (orderNumberDraftValue.length >= 4) {
+    if (activeKeypadState.draft.length >= 4) {
         return;
     }
 
-    if (orderNumberDraftValue === "0") {
-        orderNumberDraftValue = nextDigit;
+    if (activeKeypadState.replaceOnNextDigit) {
+        activeKeypadState.draft = nextDigit;
+        activeKeypadState.replaceOnNextDigit = false;
     } else {
-        orderNumberDraftValue += nextDigit;
+        if (
+            activeKeypadState.draft === "0" &&
+            nextDigit !== "0"
+        ) {
+            activeKeypadState.draft = nextDigit;
+        } else {
+            activeKeypadState.draft += nextDigit;
+        }
     }
 
-    updateOrderNumberModalDisplay();
+    updateNumericKeypadDisplay();
 }
 
 
-function removeLastOrderNumberDigit() {
-    if (orderNumberDraftValue.length <= 1) {
-        orderNumberDraftValue = "0";
-    } else {
-        orderNumberDraftValue =
-            orderNumberDraftValue.slice(0, -1);
+function handleBackspace() {
+    if (!activeKeypadState) {
+        return;
     }
 
-    updateOrderNumberModalDisplay();
+    activeKeypadState.replaceOnNextDigit = false;
+
+    if (activeKeypadState.draft.length <= 1) {
+        activeKeypadState.draft = "0";
+    } else {
+        activeKeypadState.draft =
+            activeKeypadState.draft.slice(0, -1);
+    }
+
+    updateNumericKeypadDisplay();
 }
 
 
-function applyOrderNumberDraft() {
+function applyNumericKeypadValue() {
+    if (!activeKeypadState) {
+        return;
+    }
+
     const trimmedDraft =
-        orderNumberDraftValue.trim();
+        String(activeKeypadState.draft).trim();
 
-    if (
-        trimmedDraft === "" ||
-        trimmedDraft === "0" ||
-        !/^[1-9]\d{0,3}$/.test(trimmedDraft)
-    ) {
-        alert(
-            "주문번호는 1~9999 사이의 정수만 사용할 수 있습니다."
-        );
+    if (activeKeypadState.mode === "orderNumber") {
+        if (
+            trimmedDraft === "" ||
+            trimmedDraft === "0" ||
+            !/^[1-9]\d{0,3}$/.test(trimmedDraft)
+        ) {
+            alert(
+                "주문번호는 1~9999 사이의 정수만 사용할 수 있습니다."
+            );
+
+            return;
+        }
+
+        const parsedValue =
+            Number.parseInt(trimmedDraft, 10);
+
+        if (
+            !Number.isInteger(parsedValue) ||
+            parsedValue < 1 ||
+            parsedValue > 9999
+        ) {
+            alert(
+                "주문번호는 1~9999 사이의 정수만 사용할 수 있습니다."
+            );
+
+            return;
+        }
+
+        nextOrderNumber = parsedValue;
+        updateOrderNumberDisplay();
+        saveState();
+        closeNumericKeypad();
 
         return;
     }
 
-    const parsedValue =
-        Number.parseInt(trimmedDraft, 10);
+    if (activeKeypadState.mode === "stock") {
+        const parsedValue =
+            Number.parseInt(trimmedDraft, 10);
 
-    if (
-        !Number.isInteger(parsedValue) ||
-        parsedValue < 1 ||
-        parsedValue > 9999
-    ) {
-        alert(
-            "주문번호는 1~9999 사이의 정수만 사용할 수 있습니다."
-        );
+        if (
+            !Number.isInteger(parsedValue) ||
+            parsedValue < 0 ||
+            parsedValue > 9999
+        ) {
+            alert(
+                "재고량은 0 이상 9999 이하의 정수만 사용할 수 있습니다."
+            );
 
-        return;
+            return;
+        }
+
+        stock[activeKeypadState.menuKey] =
+            parsedValue;
+
+        saveState();
+        renderStatus();
+        closeNumericKeypad();
     }
-
-    nextOrderNumber = parsedValue;
-    updateOrderNumberDisplay();
-    saveState();
-    closeOrderNumberPad();
 }
 
 
@@ -1452,38 +1529,7 @@ function renderStatus() {
 // ==========================================================
 
 function editStock(menuKey) {
-    const menu =
-        MENU_INFO[menuKey];
-
-    const enteredValue =
-        window.prompt(
-            `${menu.name} 재고수량을 입력해 주세요.`,
-            stock[menuKey]
-        );
-
-    if (enteredValue === null) {
-        return;
-    }
-
-    const newQuantity =
-        Number(enteredValue);
-
-    if (
-        !Number.isInteger(newQuantity) ||
-        newQuantity < 0
-    ) {
-        alert(
-            "재고수량은 0 이상의 정수로 입력해 주세요."
-        );
-
-        return;
-    }
-
-    stock[menuKey] =
-        newQuantity;
-
-    saveState();
-    renderStatus();
+    openNumericKeypad("stock", menuKey);
 }
 
 
@@ -1719,7 +1765,9 @@ registerButton.addEventListener(
 
 orderNumberInput.addEventListener(
     "click",
-    openOrderNumberPad
+    function () {
+        openNumericKeypad("orderNumber");
+    }
 );
 
 
@@ -1735,7 +1783,7 @@ document.querySelectorAll(
                 return;
             }
 
-            appendOrderNumberDigit(digit);
+            handleDigitInput(digit);
         }
     );
 });
@@ -1750,29 +1798,29 @@ document.querySelectorAll(
             const action = button.dataset.action;
 
             if (action === "cancel") {
-                closeOrderNumberPad();
+                closeNumericKeypad();
                 return;
             }
 
             if (action === "backspace") {
-                removeLastOrderNumberDigit();
+                handleBackspace();
             }
         }
     );
 });
 
 
-orderNumberConfirmButton.addEventListener(
+numericKeypadConfirmButton.addEventListener(
     "click",
-    applyOrderNumberDraft
+    applyNumericKeypadValue
 );
 
 
-orderNumberModal.addEventListener(
+numericKeypadModal.addEventListener(
     "click",
     function (event) {
-        if (event.target === orderNumberModal) {
-            closeOrderNumberPad();
+        if (event.target === numericKeypadModal) {
+            closeNumericKeypad();
         }
     }
 );
